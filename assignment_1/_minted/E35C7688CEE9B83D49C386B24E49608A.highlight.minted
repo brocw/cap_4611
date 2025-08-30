@@ -1,0 +1,24 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{foo\PYGZus{}grad}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}\PYG{p}{:}
+  \PYG{n}{lam} \PYG{o}{=} \PYG{l+m+mi}{4}
+  \PYG{k}{return} \PYG{n}{lam} \PYG{o}{*} \PYG{p}{(}\PYG{n}{x} \PYG{o}{*}\PYG{o}{*} \PYG{p}{(}\PYG{n}{lam} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{p}{)}\PYG{p}{)}
+
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{bar\PYGZus{}grad}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}\PYG{p}{:}
+  \PYG{n}{zeros} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{where}\PYG{p}{(}\PYG{n}{x} \PYG{o}{==} \PYG{l+m+mi}{0}\PYG{p}{)}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+  \PYG{n}{num\PYGZus{}zeros} \PYG{o}{=} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{zeros}\PYG{p}{)}
+
+  \PYG{k}{if} \PYG{n}{num\PYGZus{}zeros} \PYG{o}{\PYGZgt{}} \PYG{l+m+mi}{1}\PYG{p}{:}
+      \PYG{c+c1}{\PYGZsh{} All zeros}
+      \PYG{k}{return} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros\PYGZus{}like}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{float}\PYG{p}{)}
+  \PYG{k}{elif} \PYG{n}{num\PYGZus{}zeros} \PYG{o}{==} \PYG{l+m+mi}{1}\PYG{p}{:}
+      \PYG{n}{k} \PYG{o}{=} \PYG{n}{zeros}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+      \PYG{n}{grad} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros\PYGZus{}like}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{float}\PYG{p}{)}
+      \PYG{n}{temp\PYGZus{}x} \PYG{o}{=} \PYG{n}{x}\PYG{o}{.}\PYG{n}{copy}\PYG{p}{(}\PYG{p}{)}
+      \PYG{c+c1}{\PYGZsh{} Where 0 is}
+      \PYG{n}{temp\PYGZus{}x}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mi}{1}
+      \PYG{n}{grad}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{prod}\PYG{p}{(}\PYG{n}{temp\PYGZus{}x}\PYG{p}{)}
+      \PYG{k}{return} \PYG{n}{grad}
+  \PYG{k}{else}\PYG{p}{:}
+      \PYG{n}{product} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{prod}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}
+      \PYG{k}{return} \PYG{n}{product} \PYG{o}{/} \PYG{n}{x}
+\end{MintedVerbatim}

@@ -2,7 +2,7 @@ import numpy as np
 
 
 def example(x):
-    return np.sum(x ** 2)
+    return np.sum(x**2)
 
 
 def example_grad(x):
@@ -15,19 +15,34 @@ def foo(x):
     # ...but in general, it's probably better practice to stick to plaintext
     # names. (Can you distinguish each of λ𝛌𝜆𝝀𝝺𝞴 at a glance?)
     for x_i in x:
-        result += x_i ** λ
+        result += x_i**λ
     return result
 
+
 def foo_grad(x):
-    # Your implementation here...
-    print("TODO: Not implemented yet")
+    λ = 4
+    return λ * (x ** (λ - 1))
+
 
 def bar(x):
     return np.prod(x)
 
+
 def bar_grad(x):
-    # Your implementation here...
-    # Hint: This is a bit tricky - what if one of the x[i] is zero?
-    print("TODO: Not implemented yet")
+    zeros = np.where(x == 0)[0]
+    num_zeros = len(zeros)
 
-
+    if num_zeros > 1:
+        # All zeros
+        return np.zeros_like(x, dtype=float)
+    elif num_zeros == 1:
+        k = zeros[0]
+        grad = np.zeros_like(x, dtype=float)
+        temp_x = x.copy()
+        # Where 0 is
+        temp_x[k] = 1
+        grad[k] = np.prod(temp_x)
+        return grad
+    else:
+        product = np.prod(x)
+        return product / x

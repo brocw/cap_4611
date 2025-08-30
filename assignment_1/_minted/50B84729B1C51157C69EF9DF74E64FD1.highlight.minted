@@ -1,0 +1,11 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} where X is \PYGZob{}lat : float, lon : float\PYGZcb{}}
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{hard\PYGZus{}coded\PYGZus{}predict}\PYG{p}{(}\PYG{n}{X}\PYG{p}{)}\PYG{p}{:}
+  \PYG{k}{if} \PYG{n}{X}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{\PYGZgt{}} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{81.0}\PYG{p}{:}
+      \PYG{k}{return} \PYG{l+m+mi}{0}
+  \PYG{k}{else}\PYG{p}{:}
+      \PYG{k}{if} \PYG{n}{X}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{\PYGZgt{}} \PYG{l+m+mi}{39}\PYG{p}{:}
+          \PYG{k}{return} \PYG{l+m+mi}{0}
+      \PYG{k}{else}\PYG{p}{:}
+          \PYG{k}{return} \PYG{l+m+mi}{1}
+\end{MintedVerbatim}

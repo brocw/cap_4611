@@ -136,7 +136,7 @@ def q6_4():
 
     def print_stump(stump):
         print(
-            f"Splitting on feature {stump.j_best} at threshold {stump.t_best:f}. "
+            f"Splitting on feature {stump.j_best} at threshold {stump.t_best}. "
             f">: {stump.y_hat_yes}, <=: {stump.y_hat_no}"
         )
 
