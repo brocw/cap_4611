@@ -23,13 +23,21 @@ class KNN:
 
     def predict(self, X_hat):
         mode = utils.mode(self.y)
+        y_hat = np.arange(X_hat.shape[0])
         distance_arr = euclidean_dist_squared(self.X, X_hat)
 
-        plt.plot(X_hat)
-        plt.show()
-
-        print(np.min(distance_arr[0]))
-
         for i, test_point in enumerate(X_hat):
-            kth = np.partition(distance_arr[i], self.k)
-            print(f"[{i}]: {kth[: self.k]}")
+            training_points = []
+            for j, training_point in enumerate(self.X):
+                point_class = self.y[j]
+                training_points.append((distance_arr[j, i], point_class))
+
+            training_points.sort()
+            kth_points = training_points[: self.k]
+            k_nearest_labels = [point[1] for point in kth_points]
+            numpy_k_nearest_labels = np.asarray(k_nearest_labels)
+            prediction = utils.mode(numpy_k_nearest_labels)
+            y_hat[i] = prediction
+
+        print(f"y hat: {y_hat}")
+        return y_hat

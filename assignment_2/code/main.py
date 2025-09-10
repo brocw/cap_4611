@@ -32,7 +32,7 @@ def q1():
     X_test = dataset["Xtest"]
     y_test = dataset["ytest"]
 
-    kk = [3, 10]
+    kk = [1, 3, 10]
 
     for i in kk:
         k = i
@@ -44,6 +44,8 @@ def q1():
 
         y_pred = model.predict(X_test)
         err_test = np.mean(y_pred != y_test)
+
+        plot_classifier(model, X_test, y_test)
 
         print(f"k={i}    Training error: {err_train:.3f}")
         print(f"k={i}    Testing error: {err_test:.3f}")
