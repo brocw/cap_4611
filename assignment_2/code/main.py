@@ -32,9 +32,21 @@ def q1():
     X_test = dataset["Xtest"]
     y_test = dataset["ytest"]
 
-    """YOUR CODE HERE FOR Q1. Also modify knn.py to implement KNN predict."""
-    raise NotImplementedError()
+    kk = [3, 10]
 
+    for i in kk:
+        k = i
+        model = KNN(k)
+        model.fit(X, y)
+
+        y_hat = model.predict(X)
+        err_train = np.mean(y_hat != y)
+
+        y_pred = model.predict(X_test)
+        err_test = np.mean(y_pred != y_test)
+
+        print(f"k={i}    Training error: {err_train:.3f}")
+        print(f"k={i}    Testing error: {err_test:.3f}")
 
 
 @handle("2")
@@ -50,7 +62,6 @@ def q2():
     raise NotImplementedError()
 
 
-
 @handle("3.2")
 def q3_2():
     dataset = load_dataset("newsgroups.pkl")
@@ -62,9 +73,14 @@ def q3_2():
     groupnames = dataset["groupnames"]
     wordlist = dataset["wordlist"]
 
-    """YOUR CODE HERE FOR Q3.2"""
-    raise NotImplementedError()
+    print(wordlist[72])
+    print(X[802])
+    for i, sample in enumerate(X[802]):
+        if sample:
+            print(wordlist[i])
 
+    print(groupnames)
+    print(groupnames[y[802]])
 
 
 @handle("3.3")
@@ -116,7 +132,6 @@ def q3_4():
     raise NotImplementedError()
 
 
-
 @handle("4")
 def q4():
     dataset = load_dataset("vowel.pkl")
@@ -144,7 +159,6 @@ def q4():
     raise NotImplementedError()
 
 
-
 @handle("5")
 def q5():
     X = load_dataset("clusterData.pkl")["X"]
@@ -167,14 +181,12 @@ def q5_1():
     raise NotImplementedError()
 
 
-
 @handle("5.2")
 def q5_2():
     X = load_dataset("clusterData.pkl")["X"]
 
     """YOUR CODE HERE FOR Q5.2"""
     raise NotImplementedError()
-
 
 
 if __name__ == "__main__":
