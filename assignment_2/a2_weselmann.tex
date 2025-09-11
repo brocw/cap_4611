@@ -78,23 +78,60 @@
     \begin{enumerate}
         \item Write the \texttt{predict} function. Note that you can use the \texttt{utils.mode()} function in your implementation, and you can rely on this function to correctly handle potential ties when assigning a label to a training data point. \ask{Submit this code.} \pts{5}
         \begin{answer}
-        Hello!
+        \begin{minted}[linenos=false]{python}
+        def predict(self, X_hat):
+            mode = utils.mode(self.y)
+            y_hat = np.arange(X_hat.shape[0])
+            distance_arr = euclidean_dist_squared(self.X, X_hat)
+
+            # For each test point
+            for i, test_point in enumerate(X_hat):
+                # Tuple array (distance, class) for all training points
+                training_points = []
+                for j, training_point in enumerate(self.X):
+                    point_class = self.y[j]
+                    training_points.append((distance_arr[j, i], point_class))
+
+            # Sorting by distance, kth closest points
+            training_points.sort()
+            kth_points = training_points[: self.k]
+
+            # Getting nearest labels for kth closest points, finding prediction
+            k_nearest_labels = [point[1] for point in kth_points]
+            numpy_k_nearest_labels = np.asarray(k_nearest_labels)
+            prediction = utils.mode(numpy_k_nearest_labels)
+
+            # Ties for even split of nearest labels
+            if (
+                numpy_k_nearest_labels.size % 2 == 0
+                and prediction == numpy_k_nearest_labels.size / 2
+            ):
+                prediction = mode
+            y_hat[i] = prediction
+
+            return y_hat
+        \end{minted}
         \end{answer}
         \item \ask{Report the training and test error} obtained on the \emph{citiesSmall} dataset for $k=1$, $k=3$, and $k=10$. \emph{Optionally}, try running a decision tree on this same train/test split; which gets better test accuracy? \pts{4}
-        \begin{answer}
-
+        \begin{answer} \\
+        k=1    Training error: 0.000 \\
+        k=1    Testing error: 0.065 \\
+        k=3    Training error: 0.028 \\
+        k=3    Testing error: 0.066 \\
+        k=10    Training error: 0.058 \\
+        k=10    Testing error: 0.085
         \end{answer}
         \item Generate a plot with \texttt{utils.plot\_classifier} on the \emph{citiesSmall} dataset (plotting the training points) for $k=1$, using your implementation of kNN. \ask{Include the plot here.} To see if your implementation makes sense, you might want to check against the plot using \texttt{sklearn.neighbors.KNeighborsClassifier}. Remember that the assignment 1 code had examples of plotting with this function and saving the result, if that would be helpful. \pts{2}
         \begin{answer}
-
+        \centerfig{.5}{figs/k1_graph.png}
         \end{answer}
         \item Why is the training error $0$ for $k=1$? \pts{2}
         \begin{answer}
-
+        The training error is $0$ because the model finds the closest point in the training data (the point itself), computes that distance (0), and then assigns the value in $\hat{y}$ to the corresponding value in $y$. This results in $\hat{y}$ being the exact same as $y$, giving a training error of $0$. 
         \end{answer}
         \item Recall that we want to choose hyper-parameters so that the test error is (hopefully) minimized. How would you choose $k$? \pts{2}
         \begin{answer}
-
+        I would loop through all appropriate $k$ values, and choose the $k$ that minimizes the test error. 
         \end{answer}
     \end{enumerate}
 
@@ -432,7 +469,7 @@
         \end{answer}
         \item Why can't we (typically) use the training error to select a hyper-parameter?
         \begin{answer}
-
+        Doing so will (typically) result in the model overfitting on the training data. Hyper-parameter optimization focuses on the test error.
         \end{answer}
         \item What is the effect of the training or validation set size $n$ on the optimization bias, assuming we use a parametric model?
         \begin{answer}
@@ -444,30 +481,30 @@
         \end{answer}
         \item Recall that false positive in binary classification means $\hat y_i=1$ while $\tilde y_i = 0$. Give an example of when increasing false positives is an acceptable risk.
         \begin{answer}
-
+        In a medical application, it is preferable to have a false positive than a false negative. So, a medical imaging result showing that benign tumors are cancerous will be ruled out upon further inspection by human doctors and surgeons.
         \end{answer}
         \item Why can we ignore $p(x_i)$ when we use naive Bayes?
         \begin{answer}
-
+        $p(x_i)$ cancels out as it is the denominator and therefore a constant.
         \end{answer}
         \item For each of the three values below in a naive Bayes model, say whether it's better considered as a parameter or a hyper-parameter:
         \begin{enumerate}
             \item Our estimate of $p(y_i)$ for some $y_i$.
             \begin{answer}
-
+            Parameter.
             \end{answer}
             \item Our estimate of $p(x_{ij} \mid y_i)$ for some $x_{ij}$ and $y_i$.
             \begin{answer}
-
+            Parameter.
             \end{answer}
             \item The value $\beta$ in Laplace smoothing.
             \begin{answer}
-    
+            Hyper-parameter.
             \end{answer}
         \end{enumerate}
         \item Both supervised learning and clustering models take in an input $x_i$ and produce a label $y_i$. What is the key difference between these types of models?
         \begin{answer}
-
+        Supervised learning models are given the required labels (sick, not sick, etc.) in the training data and learn to fit $y$ to those labels. Clustering models, or unsupervised learning models, are given training data without any labels and learn to fit $y$ to labels created by the model and its hyperparameters.
         \end{answer}
         \item In $k$-means clustering the clusters are guaranteed to be convex regions. Are the areas that are given the same label by kNN also convex?
         \begin{answer}

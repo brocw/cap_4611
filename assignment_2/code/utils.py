@@ -60,6 +60,7 @@ def plot_classifier(model, X, y):
     plt.scatter(x1[y == 0], x2[y == 0], color="b", label="class 0")
     plt.scatter(x1[y == 1], x2[y == 1], color="r", label="class 1")
     plt.legend()
+    plt.show()
 
 
 def mode(y):
@@ -107,8 +108,8 @@ def euclidean_dist_squared(X, Xtest):
     # does this but a little bit nicer; this code is just here so you can
     # easily see that it's not doing anything actually very complicated
 
-    X_norms_sq = np.sum(X ** 2, axis=1)
-    Xtest_norms_sq = np.sum(Xtest ** 2, axis=1)
+    X_norms_sq = np.sum(X**2, axis=1)
+    Xtest_norms_sq = np.sum(Xtest**2, axis=1)
     dots = X @ Xtest.T
 
     return X_norms_sq[:, np.newaxis] + Xtest_norms_sq[np.newaxis, :] - 2 * dots
