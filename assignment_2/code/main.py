@@ -99,7 +99,7 @@ def q3_3():
     print(f"t = {X_valid.shape[0]}")
     print(f"Num classes = {len(np.unique(y))}")
 
-    """CODE FOR Q3.4: Modify naive_bayes.py/NaiveBayesLaplace"""
+    """CODE FOR Q3.3: Modify naive_bayes.py/NaiveBayesLaplace"""
 
     model = NaiveBayes(num_classes=4)
     model.fit(X, y)
@@ -155,7 +155,7 @@ def q4():
         print(f"    Testing error: {te_error:.3f}")
 
     print("Decision tree info gain")
-    evaluate_model(DecisionTree(max_depth=np.inf, stump_class=DecisionStumpInfoGain))
+    evaluate_model(RandomTree(max_depth=np.inf))
 
     """YOUR CODE FOR Q4. Also modify random_tree.py/RandomForest"""
     raise NotImplementedError()

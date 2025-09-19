@@ -375,11 +375,11 @@
     \begin{enumerate}
         \item Using the provided code, evaluate the \texttt{RandomTree} model of unlimited depth. \ask{Why doesn't the random tree model have a training error of 0?} \pts{2}
         \begin{answer}
-
+        \texttt{RandomTree}, which uses \texttt{RandomStumpInfoGain}, removes features at random. \texttt{DecisionTree} takes into account all of the features, and can therefore overfit the training data by finding a specific decision tree to categorize all of the data. \texttt{RandomTree} cannot do this as it randomly removes features.
         \end{answer}
         \item For \texttt{RandomTree}, if you set the \texttt{max\_depth} value to \texttt{np.inf}, \ask{why do the training functions terminate instead of making an infinite number of splitting rules?} \pts{2}
         \begin{answer}
-
+        In \texttt{fit()}, where the depth is checked to be less than or equal to 1, there is also a check if the latest decision stump does nothing. When the depth is infinity, the model will create decision stumps until they are evaluated to do nothing, which prevents 'an infinite number of splitting rules.'
         \end{answer}
         \item Complete the \texttt{RandomForest} class in \texttt{random\string_tree.py}. This class takes in hyperparameters \texttt{num\string_trees} and \texttt{max\string_depth} and
         fits \texttt{num\string_trees} random trees each with maximum depth \texttt{max\string_depth}. For prediction, have all trees predict and then take the mode. \ask{Submit this code.} \pts{5}

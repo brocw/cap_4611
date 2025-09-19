@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.8.26)  11 SEP 2025 10:57
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.8.26)  12 SEP 2025 12:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -494,12 +494,12 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 \pydata@fh@_F0125F20D07615D32783778E947D2293.data.minted=\write5
 \openout5 = `_F0125F20D07615D32783778E947D2293.data.minted'.
 
-runsystem(latexminted config  --timestamp 20250911105711 F0125F20D07615D3278377
+runsystem(latexminted config  --timestamp 20250912125015 F0125F20D07615D3278377
 8E947D2293)...executed safely (allowed).
 
 
 (./_F0125F20D07615D32783778E947D2293.config.minted)
-runsystem(latexminted cleanconfig  --timestamp 20250911105711 F0125F20D07615D32
+runsystem(latexminted cleanconfig  --timestamp 20250912125015 F0125F20D07615D32
 783778E947D2293)...executed safely (allowed).
 
 
@@ -654,7 +654,7 @@ pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share
 nts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texmf-dist/fonts/type1/publ
 ic/amsfonts/cm/cmtt8.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfr
 m1000.pfb>
-Output written on a2_weselmann.pdf (16 pages, 343146 bytes).
+Output written on a2_weselmann.pdf (16 pages, 343562 bytes).
 PDF statistics:
  324 PDF objects out of 1000 (max. 8388607)
  255 compressed objects within 3 object streams
