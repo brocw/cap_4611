@@ -131,7 +131,7 @@
         \end{answer}
         \item Recall that we want to choose hyper-parameters so that the test error is (hopefully) minimized. How would you choose $k$? \pts{2}
         \begin{answer}
-        I would loop through all appropriate $k$ values, and choose the $k$ that minimizes the test error. 
+        I would loop through all appropriate $k$ values through the process of cross-validation. This will minimize the test error and tune the $k$ value, a hyper-parameter.
         \end{answer}
     \end{enumerate}
 
@@ -210,11 +210,11 @@
     \begin{itemize}
         \item $\Pr(\text{spam})$.
         \begin{answer}
-
+        $\frac{6}{10}$
         \end{answer}
         \item $\Pr(\text{not spam})$.
         \begin{answer}
-
+        $\frac{4}{10}$
         \end{answer}
     \end{itemize}
 
@@ -224,35 +224,41 @@
     \begin{itemize}
         \item $\Pr(\text{$<$your name$>$} = 1  \mid \text{spam})$.
         \begin{answer}
-
+        $\frac{1}{6}$
         \end{answer}
         \item $\Pr(\text{lottery} = 1 \mid \text{spam})$.
         \begin{answer}
-
+        $\frac{5}{6}$
         \end{answer}
         \item $\Pr(\text{Venmo} = 0  \mid \text{spam})$.
         \begin{answer}
-
+        $\frac{2}{6}$
         \end{answer}
         \item $\Pr(\text{$<$your name$>$} = 1  \mid \text{not spam})$.
         \begin{answer}
-
+        $\frac{3}{4}$
         \end{answer}
         \item $\Pr(\text{lottery} = 1  \mid \text{not spam})$.
         \begin{answer}
-
+        $\frac{1}{4}$
         \end{answer}
         \item $\Pr(\text{Venmo} = 0  \mid \text{not spam})$.
         \begin{answer}
-
+        $\frac{3}{4}$
         \end{answer}
     \end{itemize}
 
     \subsubsection{Prediction \pts{2}}
 
     \ask{Under the naive Bayes model and your estimates of the above probabilities, what is the most likely label for the test example? \textbf{(Show your work.)}}
-    \begin{answer}
-
+    \begin{answer}\\
+    $\Pr(\hat{x} \mid \text{spam}) = \Pr(\text{$<$your name$>$} = 1 \mid \text{spam}) * \Pr(\text{lottery} = 1 \mid \text{spam}) * \Pr(\text{Venmo} = 0 \mid \text{spam}) * \Pr(\text{spam})$ \\
+    $= (\frac{1}{6}) * (\frac{5}{6}) * (\frac{2}{6}) * (\frac{6}{10})$ \\
+    $= 0.02\overline{77}$ \\ \\
+    $\Pr(\hat{x} \mid \text{not spam}) = \Pr(\text{$<$your name$>$} = 1 \mid \text{not spam}) * \Pr(\text{lottery} = 1 \mid \text{not spam}) * \Pr(\text{Venmo} = 0 \mid \text{not spam}) * \Pr(\text{not spam})$ \\
+    $= (\frac{3}{4}) * (\frac{1}{4}) * (\frac{3}{4}) * (\frac{4}{10})$ \\
+    $= 0.05625$ \\ \\
+    Since $\Pr(\hat{x} \mid \text{not spam}) > \Pr(\hat{x} \mid \text{spam})$, $\hat{x}$ would be classified as not spam.
     \end{answer}
     \subsubsection{Simulating Laplace Smoothing with Data \pts{1}}
     \label{laplace.conceptual}
@@ -384,15 +390,60 @@
         \item Complete the \texttt{RandomForest} class in \texttt{random\string_tree.py}. This class takes in hyperparameters \texttt{num\string_trees} and \texttt{max\string_depth} and
         fits \texttt{num\string_trees} random trees each with maximum depth \texttt{max\string_depth}. For prediction, have all trees predict and then take the mode. \ask{Submit this code.} \pts{5}
         \begin{answer}
+        \begin{minted}[linenos=false]{python}
+        class RandomForest:
+            num_trees = None
+            max_depth = None
 
+            models = []
+
+            def __init__(self, num_trees, max_depth):
+                self.num_trees = num_trees
+                self.max_depth = max_depth
+                for i in range(num_trees):
+                    self.models.append(RandomTree(max_depth))
+
+            def fit(self, X, y):
+                # Creating, training trees
+                for t in range(self.num_trees):
+                    self.models[t].fit(X, y)
+
+            def predict(self, X_pred):
+                n, d = X_pred.shape
+                y = np.zeros(n)
+
+                # Get predictions
+                y_hat_trees = np.empty((n, self.num_trees))
+                for t in range(self.num_trees):
+                    predictions = self.models[t].predict(X_pred)
+                    y_hat_trees[:, t] = predictions
+
+                # Find mode of predictions, add to y
+                for x in range(n):
+                    pred_array = y_hat_trees[x]
+                    y[x] = utils.mode(pred_array)
+
+                return y
+        \end{minted}
         \end{answer}
         \item Using 50 trees, and a max depth of $\infty$, \ask{report the training and testing error}. Compare this to what we got with a single \texttt{DecisionTree} and with a single \texttt{RandomTree}. \ask{Are the results what you expected? Discuss.} \pts{3}
-        \begin{answer}
+        \begin{answer} \\
+        n = 264, d = 10 \\
+        Decision tree info gain \\
+            Training error: 0.011 \\
+            Testing error: 0.443  \\
+        Random tree info gain \\
+            Training error: 0.159 \\
+            Testing error: 0.504 \\
+        Random Forest info gain \\
+            Training error: 0.000 \\
+            Testing error: 0.212 \\
 
+        Yes, the results are what I expected. Combining decision trees will improve the overall prediction, and with the amount of trees (50) and the potential depth of said trees, they do better at generalizing to the data. 
         \end{answer}
         \item \ask{Why does a random forest typically have a training error of 0, even though random trees typically have a training error greater than 0?} \pts{3}
         \begin{answer}
-
+        With many trees in a RandomForest model, there is a very high probability that individual trees will overfit to the training data, resulting in a training error (for some of the training data) for many individual trees of 0. Collecting the mode of these responses will result in the prediction overfitting the training data.
         \end{answer}
     \end{enumerate}
 
@@ -422,11 +473,18 @@
     \begin{enumerate}
         \item In the \texttt{kmeans.py} file, complete the \texttt{error()} method. \texttt{error()} takes as input the data used in fit (\texttt{X}), the indices of each examples' nearest mean (\texttt{y}), and the current value of means (\texttt{means}). It returns the value of this above objective function. \ask{Submit this code. What trend do you observe if you print the value of this error after each iteration of the $k$-means algorithm?} \pts{4}
         \begin{answer}
-
+        \begin{minted}[linenos=false]{python}
+            def error(self, X, y, means):
+                assigned_means = means[y]
+                diff = X - assigned_means
+                return np.sum(diff**2)
+        \end{minted}
+        While all of the models are randomly seeded and independent from one another, they either tend to huddle around the best value (around 3000, as shown below) or be way off (around 9000).
         \end{answer}
         \item Run $k$-means 50 times (with $k=4$) and take the one with the lowest error. \ask{Report the lowest error obtained.} Visualize the clustering obtained by this model, and \ask{submit your plot}. \pts{3}
         \begin{answer}
-
+        The best reported error was 3071.468052653855.
+        \centerfig{.5}{figs/kmeans_5_1_lowest_error.png}
         \end{answer}
     \end{enumerate}
 
@@ -443,11 +501,12 @@
         \end{answer}
         \item \ask{Is evaluating the \texttt{error} function on validation (or test data) a suitable approach to choosing $k$?} \pts{2}
         \begin{answer}
-
+        Yes, as $k$ is a hyper-parameter it must be fine-tuned via a validation set.
         \end{answer}
         \item \ask{Hand in a plot of the minimum error found across 50 random initializations, as a function of $k$, taking $k$ from $1$ to $10$.} \pts{2}
         \begin{answer}
-
+        The best reported error was with k=10, 1423.3823461994061.
+        \centerfig{.5}{figs/kmeans_5_2_lowest_error.png}
         \end{answer}
         \item The \emph{elbow method} for choosing $k$ consists of looking at the above plot and visually trying to choose the $k$ that makes the sharpest ``elbow" (the biggest change in slope). \ask{What values of $k$ might be reasonable according to this method?} Note: there is not a single correct answer here; it is somewhat open to interpretation and there is a range of reasonable answers. \pts{2}
         \begin{answer}
@@ -473,11 +532,11 @@
         \end{answer}
         \item What is the effect of the training or validation set size $n$ on the optimization bias, assuming we use a parametric model?
         \begin{answer}
-
+        The optimization bias has an inverse relationship to $n$. As $n$ decreases, the optimization bias increases, and vice versa.
         \end{answer}
         \item What is an advantage and a disadvantage of using a large $k$ value in $k$-fold cross-validation?
         \begin{answer}
-
+        An advantage is that a large $k$ value increases accuracy, and a disadvantage is that it will become more computationally expensive, especially if you are adjusting for more than one hyper-parameter.
         \end{answer}
         \item Recall that false positive in binary classification means $\hat y_i=1$ while $\tilde y_i = 0$. Give an example of when increasing false positives is an acceptable risk.
         \begin{answer}
@@ -504,11 +563,11 @@
         \end{enumerate}
         \item Both supervised learning and clustering models take in an input $x_i$ and produce a label $y_i$. What is the key difference between these types of models?
         \begin{answer}
-        Supervised learning models are given the required labels (sick, not sick, etc.) in the training data and learn to fit $y$ to those labels. Clustering models, or unsupervised learning models, are given training data without any labels and learn to fit $y$ to labels created by the model and its hyperparameters.
+        Supervised learning models are given the required labels (sick, not sick, etc.) in the training data and learn to fit $y$ to those labels. Clustering models, or unsupervised learning models, are given training data without any labels and learn to fit $y$ to labels created by the model and its hyper-parameters.
         \end{answer}
         \item In $k$-means clustering the clusters are guaranteed to be convex regions. Are the areas that are given the same label by kNN also convex?
         \begin{answer}
-
+        No. See the first plot in Question \#1, Class 0's 'island' in the middle of Class 1's region makes Class 1's region non-convex.
         \end{answer}
     \end{enumerate}
 \end{document}

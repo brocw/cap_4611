@@ -31,18 +31,13 @@ class RandomForest:
     def __init__(self, num_trees, max_depth):
         self.num_trees = num_trees
         self.max_depth = max_depth
+        for i in range(num_trees):
+            self.models.append(RandomTree(max_depth))
 
     def fit(self, X, y):
-        n = X[0].size
-
+        # Creating, training trees
         for t in range(self.num_trees):
-            # Bootstrapping data
-            X_boot = X.copy()
-            y_boot = y.copy()
-            for i in range(n):
-                j = np.random.randint(n, size=1)[0] + 1
-                X_boot[i, :] = X[j, :]
-                y_boot[i] = y[j]
+            self.models[t].fit(X, y)
 
     def predict(self, X_pred):
         n, d = X_pred.shape
@@ -51,12 +46,12 @@ class RandomForest:
         # Get predictions
         y_hat_trees = np.empty((n, self.num_trees))
         for t in range(self.num_trees):
-            predictions = models[t].predict(X_pred)
+            predictions = self.models[t].predict(X_pred)
             y_hat_trees[:, t] = predictions
 
         # Find mode of predictions, add to y
         for x in range(n):
-            pred_array = y_hat_trees[:, x]
+            pred_array = y_hat_trees[x]
             y[x] = utils.mode(pred_array)
 
         return y

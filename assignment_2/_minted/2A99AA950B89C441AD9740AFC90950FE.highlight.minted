@@ -1,0 +1,35 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{RandomForest}\PYG{p}{:}
+    \PYG{n}{num\PYGZus{}trees} \PYG{o}{=} \PYG{k+kc}{None}
+    \PYG{n}{max\PYGZus{}depth} \PYG{o}{=} \PYG{k+kc}{None}
+
+    \PYG{n}{models} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
+
+    \PYG{k}{def}\PYG{+w}{ }\PYG{n+nf+fm}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{num\PYGZus{}trees}\PYG{p}{,} \PYG{n}{max\PYGZus{}depth}\PYG{p}{)}\PYG{p}{:}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{num\PYGZus{}trees} \PYG{o}{=} \PYG{n}{num\PYGZus{}trees}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{max\PYGZus{}depth} \PYG{o}{=} \PYG{n}{max\PYGZus{}depth}
+        \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{num\PYGZus{}trees}\PYG{p}{)}\PYG{p}{:}
+            \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{models}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{RandomTree}\PYG{p}{(}\PYG{n}{max\PYGZus{}depth}\PYG{p}{)}\PYG{p}{)}
+
+    \PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{fit}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{X}\PYG{p}{,} \PYG{n}{y}\PYG{p}{)}\PYG{p}{:}
+        \PYG{c+c1}{\PYGZsh{} Creating, training trees}
+        \PYG{k}{for} \PYG{n}{t} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{num\PYGZus{}trees}\PYG{p}{)}\PYG{p}{:}
+            \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{models}\PYG{p}{[}\PYG{n}{t}\PYG{p}{]}\PYG{o}{.}\PYG{n}{fit}\PYG{p}{(}\PYG{n}{X}\PYG{p}{,} \PYG{n}{y}\PYG{p}{)}
+
+    \PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{predict}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{X\PYGZus{}pred}\PYG{p}{)}\PYG{p}{:}
+        \PYG{n}{n}\PYG{p}{,} \PYG{n}{d} \PYG{o}{=} \PYG{n}{X\PYGZus{}pred}\PYG{o}{.}\PYG{n}{shape}
+        \PYG{n}{y} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{n}\PYG{p}{)}
+
+        \PYG{c+c1}{\PYGZsh{} Get predictions}
+        \PYG{n}{y\PYGZus{}hat\PYGZus{}trees} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{empty}\PYG{p}{(}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{num\PYGZus{}trees}\PYG{p}{)}\PYG{p}{)}
+        \PYG{k}{for} \PYG{n}{t} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{num\PYGZus{}trees}\PYG{p}{)}\PYG{p}{:}
+            \PYG{n}{predictions} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{models}\PYG{p}{[}\PYG{n}{t}\PYG{p}{]}\PYG{o}{.}\PYG{n}{predict}\PYG{p}{(}\PYG{n}{X\PYGZus{}pred}\PYG{p}{)}
+            \PYG{n}{y\PYGZus{}hat\PYGZus{}trees}\PYG{p}{[}\PYG{p}{:}\PYG{p}{,} \PYG{n}{t}\PYG{p}{]} \PYG{o}{=} \PYG{n}{predictions}
+
+        \PYG{c+c1}{\PYGZsh{} Find mode of predictions, add to y}
+        \PYG{k}{for} \PYG{n}{x} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{n}\PYG{p}{)}\PYG{p}{:}
+            \PYG{n}{pred\PYGZus{}array} \PYG{o}{=} \PYG{n}{y\PYGZus{}hat\PYGZus{}trees}\PYG{p}{[}\PYG{n}{x}\PYG{p}{]}
+            \PYG{n}{y}\PYG{p}{[}\PYG{n}{x}\PYG{p}{]} \PYG{o}{=} \PYG{n}{utils}\PYG{o}{.}\PYG{n}{mode}\PYG{p}{(}\PYG{n}{pred\PYGZus{}array}\PYG{p}{)}
+
+        \PYG{k}{return} \PYG{n}{y}
+\end{MintedVerbatim}

@@ -51,6 +51,6 @@ class Kmeans:
         return np.argmin(distance_matrix, axis=1)
 
     def error(self, X, y, means):
-        """YOUR CODE HERE FOR Q5.1"""
-        raise NotImplementedError()
-
+        assigned_means = means[y]
+        diff = X - assigned_means
+        return np.sum(diff**2)

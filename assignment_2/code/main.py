@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 import argparse
 import os
+import sys
 import pickle
+import random
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -60,8 +62,52 @@ def q2():
     y_test = dataset["ytest"]
 
     ks = list(range(1, 30, 4))
-    """YOUR CODE HERE FOR Q2"""
-    raise NotImplementedError()
+
+    kk = [1]
+    for i in kk:
+        k = i
+
+        # 10-fold cross-validation
+        cv_accs = 0.0
+        n = X.size
+        for fold in range(11):
+            # Calculating partition size
+            # From: https://g.co/gemini/share/1b623820fd6f
+            mask_arr = np.ones(n, dtype=int)
+            base_size, remainder = divmod(n, 10)
+            start_index = fold * base_size + min(fold, remainder)
+            partition_size = base_size + 1 if fold < remainder else base_size
+            end_index = start_index + partition_size
+
+            # Training on 90%, these 0 indices are
+            mask_arr[start_index:end_index] = 0
+
+            np.set_printoptions(threshold=sys.maxsize)
+            print(mask_arr)
+
+            cross_test = np.take(X, ~mask_arr)
+            cross_y_test = np.take(y, ~mask_arr)
+            cross_train = np.take(X, mask_arr)
+            cross_y_train = np.take(y, mask_arr)
+
+            print(
+                f"X={X.shape} y={y.shape} cross_train={cross_train.shape} cross_y_train={cross_y_train.shape}"
+            )
+
+            model = KNN(k)
+            model.fit(cross_train, cross_y_train)
+
+            y_hat = model.predict(cross_train)
+            err_train = np.mean(y_hat != cross_y_train)
+
+            y_pred = model.predict(cross_test)
+            err_test = np.mean(y_pred != cross_y_test)
+
+            print(f"k={i} fold={fold}  ignore? Training error: {err_train:.3f}")
+            print(f"k={i} fold={fold}          Testing error: {err_test:.3f}")
+
+            cv_accs += err_test
+        cv_accs /= 10
 
 
 @handle("3.2")
@@ -155,10 +201,13 @@ def q4():
         print(f"    Testing error: {te_error:.3f}")
 
     print("Decision tree info gain")
+    evaluate_model(DecisionTree(max_depth=np.inf))
+
+    print("Random tree info gain")
     evaluate_model(RandomTree(max_depth=np.inf))
 
-    """YOUR CODE FOR Q4. Also modify random_tree.py/RandomForest"""
-    raise NotImplementedError()
+    print("Random Forest info gain")
+    evaluate_model(RandomForest(num_trees=50, max_depth=np.inf))
 
 
 @handle("5")
@@ -179,16 +228,36 @@ def q5():
 def q5_1():
     X = load_dataset("clusterData.pkl")["X"]
 
-    """YOUR CODE HERE FOR Q5.1. Also modify kmeans.py/Kmeans"""
-    raise NotImplementedError()
+    best_error = 9999999
+    fname = Path("..", "figs", "kmeans_5_1_lowest_error.png")
+    for i in range(50):
+        model = Kmeans(k=4)
+        model.fit(X)
+        y = model.predict(X)
+        plt.scatter(X[:, 0], X[:, 1], c=y, cmap="jet")
+        error = model.error(X, y, model.means)
+        print(f"[{i}]: Error {error}")
+        if error < best_error:
+            best_error = error
+            plt.scatter(X[:, 0], X[:, 1], c=y, cmap="jet")
+            plt.savefig(fname)
+            print("Best error so far, saved.")
 
 
 @handle("5.2")
 def q5_2():
     X = load_dataset("clusterData.pkl")["X"]
 
-    """YOUR CODE HERE FOR Q5.2"""
-    raise NotImplementedError()
+    fname = Path("..", "figs", "kmeans_5_2_lowest_error.png")
+    k_graph = []
+    for i in range(50):
+        k = random.choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        model = Kmeans(k)
+        model.fit(X)
+        y = model.predict(X)
+        error = model.error(X, y, model.means)
+        k_graph.append((k, error))
+        print(f"[{i}] k={k}: Error {error}")
 
 
 if __name__ == "__main__":

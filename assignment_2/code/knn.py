@@ -7,8 +7,6 @@ import numpy as np
 import utils
 from utils import euclidean_dist_squared
 
-import matplotlib.pyplot as plt
-
 
 class KNN:
     X = None

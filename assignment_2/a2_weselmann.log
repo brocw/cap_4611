@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.8.26)  12 SEP 2025 12:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.8.29)  19 SEP 2025 16:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -494,12 +494,12 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 \pydata@fh@_F0125F20D07615D32783778E947D2293.data.minted=\write5
 \openout5 = `_F0125F20D07615D32783778E947D2293.data.minted'.
 
-runsystem(latexminted config  --timestamp 20250912125015 F0125F20D07615D3278377
+runsystem(latexminted config  --timestamp 20250919164013 F0125F20D07615D3278377
 8E947D2293)...executed safely (allowed).
 
 
 (./_F0125F20D07615D32783778E947D2293.config.minted)
-runsystem(latexminted cleanconfig  --timestamp 20250912125015 F0125F20D07615D32
+runsystem(latexminted cleanconfig  --timestamp 20250919164013 F0125F20D07615D32
 783778E947D2293)...executed safely (allowed).
 
 
@@ -544,6 +544,16 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 [5
 
 {/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
+Underfull \hbox (badness 10000) in paragraph at lines 254--263
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 254--263
+
+ []
+
+
 
 [6]
 
@@ -561,66 +571,86 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 [10
 
-]
+] (./_minted/2A99AA950B89C441AD9740AFC90950FE.highlight.minted
 
 [11
 
-]
-<figs/kmeans_basic.png, id=172, 462.528pt x 346.896pt>
+])
+Underfull \hbox (badness 10000) in paragraph at lines 430--441
+
+ []
+
+
+
+[12]
+<figs/kmeans_basic.png, id=176, 462.528pt x 346.896pt>
 File: figs/kmeans_basic.png Graphic file (type png)
 <use figs/kmeans_basic.png>
-Package pdftex.def Info: figs/kmeans_basic.png  used on input line 407.
+Package pdftex.def Info: figs/kmeans_basic.png  used on input line 458.
 (pdftex.def)             Requested size: 234.8775pt x 176.15768pt.
-<figs/kmeans_good.png, id=173, 462.528pt x 346.896pt>
+<figs/kmeans_good.png, id=177, 462.528pt x 346.896pt>
 File: figs/kmeans_good.png Graphic file (type png)
 <use figs/kmeans_good.png>
-Package pdftex.def Info: figs/kmeans_good.png  used on input line 410.
+Package pdftex.def Info: figs/kmeans_good.png  used on input line 461.
 (pdftex.def)             Requested size: 234.8775pt x 176.15768pt.
-
-
-[12
-
- <./figs/kmeans_basic.png> <./figs/kmeans_good.png>]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 414.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 414.
-
 
 
 [13
 
-]
+ <./figs/kmeans_basic.png> <./figs/kmeans_good.png>]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 435.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 435.
+(hyperref)                removing `math shift' on input line 465.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 435.
+(hyperref)                removing `math shift' on input line 465.
 
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 435.
-
+(./_minted/635F9B41CBE222FE2BC8DC1776CF26BC.highlight.minted)
+<figs/kmeans_5_1_lowest_error.png, id=185, 462.528pt x 346.896pt>
+File: figs/kmeans_5_1_lowest_error.png Graphic file (type png)
+<use figs/kmeans_5_1_lowest_error.png>
+Package pdftex.def Info: figs/kmeans_5_1_lowest_error.png  used on input line 4
+87.
+(pdftex.def)             Requested size: 234.8775pt x 176.15768pt.
 
 
 [14
 
-]
+ <./figs/kmeans_5_1_lowest_error.png>]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 493.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 493.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 493.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 493.
+
+<figs/kmeans_5_2_lowest_error.png, id=194, 462.528pt x 346.896pt>
+File: figs/kmeans_5_2_lowest_error.png Graphic file (type png)
+<use figs/kmeans_5_2_lowest_error.png>
+Package pdftex.def Info: figs/kmeans_5_2_lowest_error.png  used on input line 5
+09.
+(pdftex.def)             Requested size: 234.8775pt x 176.15768pt.
+
 
 [15
 
+ <./figs/kmeans_5_2_lowest_error.png>]
+
+[16
+
 ]
 
-[16] (./a2_weselmann.aux)
+[17] (./a2_weselmann.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -629,13 +659,13 @@ Package rerunfilecheck Info: File `a2_weselmann.out' has not changed.
 (rerunfilecheck)             Checksum: B4BC441E8E68AB203EEC89D859EB13EF;4064.
  ) 
 Here is how much of TeX's memory you used:
- 15858 strings out of 475171
- 296186 string characters out of 5767095
+ 15891 strings out of 475171
+ 297583 string characters out of 5767095
  793124 words of memory out of 5000000
- 38570 multiletter control sequences out of 15000+600000
+ 38596 multiletter control sequences out of 15000+600000
  569132 words of font info for 77 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 70i,9n,79p,904b,1057s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 70i,9n,79p,904b,1125s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fon
 ts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/publi
@@ -654,10 +684,10 @@ pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share
 nts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texmf-dist/fonts/type1/publ
 ic/amsfonts/cm/cmtt8.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfr
 m1000.pfb>
-Output written on a2_weselmann.pdf (16 pages, 343562 bytes).
+Output written on a2_weselmann.pdf (17 pages, 395127 bytes).
 PDF statistics:
- 324 PDF objects out of 1000 (max. 8388607)
- 255 compressed objects within 3 object streams
- 77 named destinations out of 1000 (max. 500000)
- 152 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 332 PDF objects out of 1000 (max. 8388607)
+ 258 compressed objects within 3 object streams
+ 78 named destinations out of 1000 (max. 500000)
+ 162 words of extra memory for PDF output out of 10000 (max. 10000000)
 
