@@ -24,16 +24,18 @@ class NaiveBayes:
         counts = np.bincount(y)
         p_y = counts / n
 
-        """YOUR CODE HERE FOR Q3.3"""
-
         # Compute the conditional probabilities i.e.
         # p(x_ij=1 | y_i==c) as p_xy[j, c]
         # p(x_ij=0 | y_i==c) as 1 - p_xy[j, c]
-        p_xy = 0.5 * np.ones((d, k))
-        # TODO: replace the above line with the proper code
+        p_xy = np.ones((d, k))
+        for c in range(k):
+            # Assign mask, create sub-matrix
+            mask = y == c
+            X_c = X[mask, :]
 
-        raise NotImplementedError()
-
+            # Sum up, divide, assign
+            sum = np.sum(X_c, axis=0)
+            p_xy[:, c] = sum / counts[c]
 
         self.p_y = p_y
         self.p_xy = p_xy
@@ -46,7 +48,6 @@ class NaiveBayes:
 
         y_pred = np.zeros(n)
         for i in range(n):
-
             probs = p_y.copy()  # initialize with the p(y) terms
             for j in range(d):
                 if X[i, j] != 0:
@@ -65,9 +66,27 @@ class NaiveBayesLaplace(NaiveBayes):
         self.beta = beta
 
     def fit(self, X, y):
-        """YOUR CODE FOR Q3.4"""
-        raise NotImplementedError()
+        n, d = X.shape
 
+        # Compute the number of class labels
+        k = self.num_classes
+
+        # Compute the probability of each class i.e p(y==c), aka "baseline -ness"
+        counts = np.bincount(y)
+        p_y = counts / n
+
+        # Compute the conditional probabilities i.e.
+        # p(x_ij=1 | y_i==c) as p_xy[j, c]
+        # p(x_ij=0 | y_i==c) as 1 - p_xy[j, c]
+        p_xy = np.ones((d, k))
+        for c in range(k):
+            # Assign mask, create sub-matrix
+            mask = y == c
+            X_c = X[mask, :]
+
+            # Sum up, divide, assign
+            sum = np.sum(X_c, axis=0)
+            p_xy[:, c] = (sum + self.beta) / (counts[c] + (self.beta * k))
 
         self.p_y = p_y
         self.p_xy = p_xy

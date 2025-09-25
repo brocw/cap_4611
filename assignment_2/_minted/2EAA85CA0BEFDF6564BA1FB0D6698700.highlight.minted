@@ -1,0 +1,33 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} 10\PYGZhy{}fold cross\PYGZhy{}validation}
+\PYG{n}{cv\PYGZus{}accs} \PYG{o}{=} \PYG{l+m+mf}{0.0}
+\PYG{n}{n} \PYG{o}{=} \PYG{n}{X}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+\PYG{k}{for} \PYG{n}{fold} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{p}{)}\PYG{p}{:}
+    \PYG{c+c1}{\PYGZsh{} Calculating partition size}
+    \PYG{c+c1}{\PYGZsh{} From: https://g.co/gemini/share/1b623820fd6f}
+    \PYG{n}{mask\PYGZus{}arr} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{ones}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n+nb}{int}\PYG{p}{)}
+    \PYG{n}{base\PYGZus{}size}\PYG{p}{,} \PYG{n}{remainder} \PYG{o}{=} \PYG{n+nb}{divmod}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{l+m+mi}{10}\PYG{p}{)}
+    \PYG{n}{start\PYGZus{}index} \PYG{o}{=} \PYG{n}{fold} \PYG{o}{*} \PYG{n}{base\PYGZus{}size} \PYG{o}{+} \PYG{n+nb}{min}\PYG{p}{(}\PYG{n}{fold}\PYG{p}{,} \PYG{n}{remainder}\PYG{p}{)}
+    \PYG{n}{partition\PYGZus{}size} \PYG{o}{=} \PYG{n}{base\PYGZus{}size} \PYG{o}{+} \PYG{l+m+mi}{1} \PYG{k}{if} \PYG{n}{fold} \PYG{o}{\PYGZlt{}} \PYG{n}{remainder} \PYG{k}{else} \PYG{n}{base\PYGZus{}size}
+    \PYG{n}{end\PYGZus{}index} \PYG{o}{=} \PYG{n}{start\PYGZus{}index} \PYG{o}{+} \PYG{n}{partition\PYGZus{}size}
+
+    \PYG{n}{mask\PYGZus{}arr}\PYG{p}{[}\PYG{n}{start\PYGZus{}index}\PYG{p}{:}\PYG{n}{end\PYGZus{}index}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{n}{train\PYGZus{}mask} \PYG{o}{=} \PYG{n}{mask\PYGZus{}arr}\PYG{o}{.}\PYG{n}{astype}\PYG{p}{(}\PYG{n+nb}{bool}\PYG{p}{)}
+    \PYG{n}{test\PYGZus{}mask} \PYG{o}{=} \PYG{o}{\PYGZti{}}\PYG{n}{train\PYGZus{}mask}
+
+    \PYG{n}{cross\PYGZus{}test} \PYG{o}{=} \PYG{n}{X}\PYG{p}{[}\PYG{n}{test\PYGZus{}mask}\PYG{p}{]}
+    \PYG{n}{cross\PYGZus{}y\PYGZus{}test} \PYG{o}{=} \PYG{n}{y}\PYG{p}{[}\PYG{n}{test\PYGZus{}mask}\PYG{p}{]}
+    \PYG{n}{cross\PYGZus{}train} \PYG{o}{=} \PYG{n}{X}\PYG{p}{[}\PYG{n}{train\PYGZus{}mask}\PYG{p}{]}
+    \PYG{n}{cross\PYGZus{}y\PYGZus{}train} \PYG{o}{=} \PYG{n}{y}\PYG{p}{[}\PYG{n}{train\PYGZus{}mask}\PYG{p}{]}
+
+    \PYG{n}{model} \PYG{o}{=} \PYG{n}{KNN}\PYG{p}{(}\PYG{n}{k}\PYG{p}{)}
+    \PYG{n}{model}\PYG{o}{.}\PYG{n}{fit}\PYG{p}{(}\PYG{n}{cross\PYGZus{}train}\PYG{p}{,} \PYG{n}{cross\PYGZus{}y\PYGZus{}train}\PYG{p}{)}
+
+    \PYG{n}{y\PYGZus{}pred} \PYG{o}{=} \PYG{n}{model}\PYG{o}{.}\PYG{n}{predict}\PYG{p}{(}\PYG{n}{cross\PYGZus{}test}\PYG{p}{)}
+    \PYG{n}{err\PYGZus{}test} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{y\PYGZus{}pred} \PYG{o}{!=} \PYG{n}{cross\PYGZus{}y\PYGZus{}test}\PYG{p}{)}
+
+    \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+sa}{f}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{k=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{i}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{ fold=}\PYG{l+s+si}{\PYGZob{}}\PYG{n}{fold}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{          Testing error: }\PYG{l+s+si}{\PYGZob{}}\PYG{n}{err\PYGZus{}test}\PYG{l+s+si}{:}\PYG{l+s+s2}{.3f}\PYG{l+s+si}{\PYGZcb{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+
+    \PYG{n}{cv\PYGZus{}accs} \PYG{o}{+}\PYG{o}{=} \PYG{n}{err\PYGZus{}test}
+\PYG{n}{cv\PYGZus{}accs} \PYG{o}{/}\PYG{o}{=} \PYG{l+m+mi}{10}
+\end{MintedVerbatim}

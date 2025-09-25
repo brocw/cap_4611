@@ -92,23 +92,22 @@
                     point_class = self.y[j]
                     training_points.append((distance_arr[j, i], point_class))
 
-            # Sorting by distance, kth closest points
-            training_points.sort()
-            kth_points = training_points[: self.k]
+                # Sorting by distance, kth closest points
+                training_points.sort()
+                kth_points = training_points[: self.k]
 
-            # Getting nearest labels for kth closest points, finding prediction
-            k_nearest_labels = [point[1] for point in kth_points]
-            numpy_k_nearest_labels = np.asarray(k_nearest_labels)
-            prediction = utils.mode(numpy_k_nearest_labels)
+                # Getting nearest labels for kth closest points, finding prediction
+                k_nearest_labels = [point[1] for point in kth_points]
+                numpy_k_nearest_labels = np.asarray(k_nearest_labels)
+                prediction = utils.mode(numpy_k_nearest_labels)
 
-            # Ties for even split of nearest labels
-            if (
-                numpy_k_nearest_labels.size % 2 == 0
-                and prediction == numpy_k_nearest_labels.size / 2
-            ):
-                prediction = mode
-            y_hat[i] = prediction
-
+                # Ties for even split of nearest labels
+                if (
+                    numpy_k_nearest_labels.size % 2 == 0
+                    and prediction == numpy_k_nearest_labels.size / 2
+                ):
+                    prediction = mode
+                y_hat[i] = prediction
             return y_hat
         \end{minted}
         \end{answer}
@@ -148,19 +147,52 @@
 
         \ask{Submit this code}, following the general submission instructions to include your code in your results file. \pts{5}
         \begin{answer}
+        \begin{minted}[linenos=false]{python}
+        # 10-fold cross-validation
+        cv_accs = 0.0
+        n = X.shape[0]
+        for fold in range(10):
+            # Calculating partition size
+            # From: https://g.co/gemini/share/1b623820fd6f
+            mask_arr = np.ones(n, dtype=int)
+            base_size, remainder = divmod(n, 10)
+            start_index = fold * base_size + min(fold, remainder)
+            partition_size = base_size + 1 if fold < remainder else base_size
+            end_index = start_index + partition_size
 
+            mask_arr[start_index:end_index] = 0
+            train_mask = mask_arr.astype(bool)
+            test_mask = ~train_mask
+            
+            cross_test = X[test_mask]
+            cross_y_test = y[test_mask]
+            cross_train = X[train_mask]
+            cross_y_train = y[train_mask]
+
+            model = KNN(k)
+            model.fit(cross_train, cross_y_train)
+
+            y_pred = model.predict(cross_test)
+            err_test = np.mean(y_pred != cross_y_test)
+
+            print(f"k={i} fold={fold}          Testing error: {err_test:.3f}")
+
+            cv_accs += err_test
+        cv_accs /= 10
+        \end{minted}
         \end{answer}
         \item The point of cross-validation is to get a sense of what the test error for a particular value of $k$ would be. Implement, similarly to the code you wrote for question 1.2, a loop to compute the test accuracy for each value of $k$ above. \ask{Submit a plot the cross-validation and test accuracies as a function of $k$.} Make sure your plot has axis labels and a legend. \pts{5}
         \begin{answer}
-
+        \centerfig{.5}{figs/k2_graph.png}
         \end{answer}
         \item Which $k$ would cross-validation choose in this case? Which $k$ has the best test accuracy? Would the cross-validation $k$ do okay (qualitatively) in terms of test accuracy? \pts{2}
         \begin{answer}
-
+        $k = 17$ would have the best cross-validation score. The best test accuracy would be $k = 13$. The cross-validation would do relatively okay compared to the test accuracy.
         \end{answer}
         \item Separately, \ask{submit a plot of the training error as a function of $k$. How would the $k$ with best training error do in terms of test error, qualitatively?} \pts{3}
         \begin{answer}
-
+        \centerfig{.5}{figs/k2_error_graph.png}
+        The value with the best training error, $k = 29$, does worse than selecting for the value with the best test error, $k = 17$.
         \end{answer}
     \end{enumerate}
 
@@ -267,7 +299,20 @@
     \ask{Give a set of extra training examples where, if they were included in the training set, the ``plain'' estimation method (with no Laplace smoothing) would give the same estimates of the conditional probabilities as using the original dataset with Laplace smoothing.}
     Present your answer in a reasonably easy-to-read format, for example the same format as the data set at the start of this question.
     \begin{answer}
-
+    \[
+    X = \begin{bmatrix}
+        1 & 1 & 0\\
+        0 & 0 & 1\\
+        1 & 1 & 0\\
+        0 & 0 & 1
+    \end{bmatrix},
+    \quad y = \begin{bmatrix}
+        \text{spam}\\
+        \text{spam}\\
+        \text{not spam}\\
+        \text{not spam}
+    \end{bmatrix}.
+    \]
     \end{answer}
 
     \clearpage
@@ -311,7 +356,35 @@
         computes the conditional probabilities of these values based on the
         frequencies in the data set. Submit your code. Report the training and validation errors that you obtain.}
     \begin{answer}
+    \begin{minted}[linenos=false]{python}
+    def fit(self, X, y):
+        n, d = X.shape
 
+        # Compute the number of class labels
+        k = self.num_classes
+
+        # Compute the probability of each class i.e p(y==c), aka "baseline -ness"
+        counts = np.bincount(y)
+        p_y = counts / n
+
+        # Compute the conditional probabilities i.e.
+        # p(x_ij=1 | y_i==c) as p_xy[j, c]
+        # p(x_ij=0 | y_i==c) as 1 - p_xy[j, c]
+        p_xy = np.ones((d, k))
+        for c in range(k):
+            # Assign mask, create sub-matrix
+            mask = y == c
+            X_c = X[mask, :]
+
+            # Sum up, divide, assign
+            sum = np.sum(X_c, axis=0)
+            p_xy[:, c] = sum / counts[c]
+
+        self.p_y = p_y
+        self.p_xy = p_xy
+    \end{minted}
+    Naive Bayes training error: 0.200 \\
+    Naive Bayes validation error: 0.188
     \end{answer}
     \clearpage
     \subsection{Laplace Smoothing Implementation \pts{4}}
@@ -320,15 +393,41 @@
     \begin{itemize}
         \item Modify the \texttt{NaiveBayesLaplace} class provided in \texttt{naive\_bayes.py} and write its \texttt{fit()} method to implement Laplace smoothing. \ask{Submit this code.}
         \begin{answer}
+        \begin{minted}[linenos=false]{python}
+        def fit(self, X, y):
+            n, d = X.shape
 
+            # Compute the number of class labels
+            k = self.num_classes
+
+            # Compute the probability of each class i.e p(y==c), aka "baseline -ness"
+            counts = np.bincount(y)
+            p_y = counts / n
+
+            # Compute the conditional probabilities i.e.
+            # p(x_ij=1 | y_i==c) as p_xy[j, c]
+            # p(x_ij=0 | y_i==c) as 1 - p_xy[j, c]
+            p_xy = np.ones((d, k))
+            for c in range(k):
+                # Assign mask, create sub-matrix
+                mask = y == c
+                X_c = X[mask, :]
+
+                # Sum up, divide, assign
+                sum = np.sum(X_c, axis=0)
+                p_xy[:, c] = (sum + self.beta) / (counts[c] + (self.beta * k))
+
+            self.p_y = p_y
+            self.p_xy = p_xy
+        \end{minted}
         \end{answer}
         \item Using the same data as the previous section, fit Na\"ive Bayes models with \textbf{and} without Laplace smoothing to the training data. Use $\beta=1$ for Laplace smoothing. For each model, look at $p(x_{ij} = 1 \ | \ y_i = 0)$ across all $j$ values (i.e. all features) in both models. \ask{Do you notice any difference? Explain.}
         \begin{answer}
-
+        I don't see a difference, no. $p(x_{ij} = 1 \ | \ y_i = 0)$ is not affected by the problem Laplace smoothing attempts to solve, which is when $p(x_{ij})$ does not exist in our dataset. 
         \end{answer}
         \item One more time, fit a Na\"ive Bayes model with Laplace smoothing using $\beta=10000$. Look at $p(x_{ij} = 1 \ | \ y_i = 0)$. \ask{Do these numbers look like what you expect? Explain.}
         \begin{answer}
-
+        Yes, the number seems to be doubled compared with the $p(x_{ij} = 1 \ | \ y_i = 0)$ in the previous question. The training and validation errors also tripled - It seems like an increase of beta by a factor of 10000 messes with the probabilities immensely. 
         \end{answer}
     \end{itemize}
 
@@ -357,7 +456,7 @@
     You can implement the training phase of a naive Bayes classifier in this setup in $O(nd)$, since you only need to do a constant amount of work for each $x_{ij}$ value. (You do not have to actually implement it in this way for the previous question, but you should think about how this could be done.)
     \ask{What is the cost of classifying $t$ test examples with the model and this way of computing the predictions?}
     \begin{answer}
-
+    $O(t^2) + O(n^2 + t)$
     \end{answer}
 
     \clearpage
@@ -497,7 +596,7 @@
     \begin{enumerate}
         \item \ask{Explain why we should not choose $k$ by taking the value that minimizes the \texttt{error} value.} \pts{2}
         \begin{answer}
-
+        Minimizing the error value in this case would be choosing a maximum value of $k$, so a k value of 10 or greater. This would arbitrarily increase the amount of clusters, when in actuality the data doesn't have that many unique clusters. 
         \end{answer}
         \item \ask{Is evaluating the \texttt{error} function on validation (or test data) a suitable approach to choosing $k$?} \pts{2}
         \begin{answer}
@@ -505,12 +604,11 @@
         \end{answer}
         \item \ask{Hand in a plot of the minimum error found across 50 random initializations, as a function of $k$, taking $k$ from $1$ to $10$.} \pts{2}
         \begin{answer}
-        The best reported error was with k=10, 1423.3823461994061.
         \centerfig{.5}{figs/kmeans_5_2_lowest_error.png}
         \end{answer}
         \item The \emph{elbow method} for choosing $k$ consists of looking at the above plot and visually trying to choose the $k$ that makes the sharpest ``elbow" (the biggest change in slope). \ask{What values of $k$ might be reasonable according to this method?} Note: there is not a single correct answer here; it is somewhat open to interpretation and there is a range of reasonable answers. \pts{2}
         \begin{answer}
-
+        The 'elbow' of the above plot is either $k = 3$ or $k = 4$. After $k = 4$, the error 'bottoms' out and there is no use to changing it. This is reflected in the data set - There is no more than 4 unique clusters.
         \end{answer}
     \end{enumerate}
 
@@ -518,9 +616,6 @@
     \section{Very-Short Answer Questions \pts{18}}
 
     \ask{Write a short one or two sentence answer to each of the questions below}. Make sure your answer is clear and concise.
-    \begin{answer}
-
-    \end{answer}
     \begin{enumerate}
         \item What is a reason that the the data may not be IID in the email spam filtering example from lecture?
         \begin{answer}
@@ -544,7 +639,7 @@
         \end{answer}
         \item Why can we ignore $p(x_i)$ when we use naive Bayes?
         \begin{answer}
-        $p(x_i)$ cancels out as it is the denominator and therefore a constant.
+        $p(x_i)$ cancels out as it is the denominator on both sides of the equation and therefore a constant.
         \end{answer}
         \item For each of the three values below in a naive Bayes model, say whether it's better considered as a parameter or a hyper-parameter:
         \begin{enumerate}

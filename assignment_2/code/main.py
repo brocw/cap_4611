@@ -62,15 +62,17 @@ def q2():
     y_test = dataset["ytest"]
 
     ks = list(range(1, 30, 4))
-
-    kk = [1]
-    for i in kk:
-        k = i
+    ks_graph = np.zeros((len(ks), 10))
+    cv_graph = []
+    test_graph = []
+    train_graph = []
+    for index, kk in enumerate(ks):
+        k = kk
 
         # 10-fold cross-validation
         cv_accs = 0.0
-        n = X.size
-        for fold in range(11):
+        n = X.shape[0]
+        for fold in range(10):
             # Calculating partition size
             # From: https://g.co/gemini/share/1b623820fd6f
             mask_arr = np.ones(n, dtype=int)
@@ -79,35 +81,67 @@ def q2():
             partition_size = base_size + 1 if fold < remainder else base_size
             end_index = start_index + partition_size
 
-            # Training on 90%, these 0 indices are
             mask_arr[start_index:end_index] = 0
+            train_mask = mask_arr.astype(bool)
+            test_mask = ~train_mask
 
-            np.set_printoptions(threshold=sys.maxsize)
-            print(mask_arr)
-
-            cross_test = np.take(X, ~mask_arr)
-            cross_y_test = np.take(y, ~mask_arr)
-            cross_train = np.take(X, mask_arr)
-            cross_y_train = np.take(y, mask_arr)
-
-            print(
-                f"X={X.shape} y={y.shape} cross_train={cross_train.shape} cross_y_train={cross_y_train.shape}"
-            )
+            cross_test = X[test_mask]
+            cross_y_test = y[test_mask]
+            cross_train = X[train_mask]
+            cross_y_train = y[train_mask]
 
             model = KNN(k)
             model.fit(cross_train, cross_y_train)
 
-            y_hat = model.predict(cross_train)
-            err_train = np.mean(y_hat != cross_y_train)
-
             y_pred = model.predict(cross_test)
-            err_test = np.mean(y_pred != cross_y_test)
+            fold_err_test = np.mean(y_pred != cross_y_test)
 
-            print(f"k={i} fold={fold}  ignore? Training error: {err_train:.3f}")
-            print(f"k={i} fold={fold}          Testing error: {err_test:.3f}")
+            print(f"k={k} fold={fold}          Testing error: {fold_err_test:.3f}")
+            ks_graph[index][fold] = fold_err_test
 
-            cv_accs += err_test
+            cv_accs += fold_err_test
+
         cv_accs /= 10
+        cv_graph.append(1 - cv_accs)
+
+        # Test accuracy
+        y_hat = model.predict(X)
+        err_train = np.mean(y_hat != y)
+        train_graph.append(err_train)
+        y_pred = model.predict(X_test)
+        err_test = np.mean(y_pred != y_test)
+        test_graph.append(1 - err_test)
+
+    k_values = [
+        "1",
+        "5",
+        "9",
+        "13",
+        "17",
+        "21",
+        "25",
+        "29",
+    ]
+
+    k_values_int = [int(k) for k in k_values]
+
+    # fname = Path("..", "figs", "k2_graph.png")
+    # fig, ax = plt.subplots()
+    # ax.plot(k_values_int, cv_graph, marker="o", label="Cross-Validation Accuracy")
+    # ax.plot(k_values_int, test_graph, marker="s", label="Test Accuracy")
+    # ax.legend()
+    # plt.xlabel("K-Values")
+    # ax.set_xticks(k_values_int)
+    # plt.ylabel("Accuracy")
+    # plt.title("Cross-Validation & Test Accuracy Comparison")
+    # plt.savefig(fname)
+
+    f2name = Path("..", "figs", "k2_error_graph.png")
+    plt.plot(k_values, train_graph, marker="o")
+    plt.xlabel("K-Values")
+    plt.ylabel("Accuracy")
+    plt.title("Training error VS. K")
+    plt.savefig(f2name)
 
 
 @handle("3.2")
@@ -145,8 +179,6 @@ def q3_3():
     print(f"t = {X_valid.shape[0]}")
     print(f"Num classes = {len(np.unique(y))}")
 
-    """CODE FOR Q3.3: Modify naive_bayes.py/NaiveBayesLaplace"""
-
     model = NaiveBayes(num_classes=4)
     model.fit(X, y)
 
@@ -176,8 +208,40 @@ def q3_4():
     model = NaiveBayes(num_classes=4)
     model.fit(X, y)
 
-    """YOUR CODE HERE FOR Q3.4. Also modify naive_bayes.py/NaiveBayesLaplace"""
-    raise NotImplementedError()
+    y_hat = model.predict(X)
+    err_train = np.mean(y_hat != y)
+    print(f"Naive Bayes training error: {err_train:.3f}")
+
+    y_hat = model.predict(X_valid)
+    err_valid = np.mean(y_hat != y_valid)
+    print(f"Naive Bayes validation error: {err_valid:.3f}")
+
+    model_laplace = NaiveBayesLaplace(num_classes=4, beta=1)
+    model_laplace.fit(X, y)
+
+    y_hat = model_laplace.predict(X)
+    err_train = np.mean(y_hat != y)
+    print(f"Laplace Naive Bayes training error: {err_train:.3f}")
+
+    y_hat = model_laplace.predict(X_valid)
+    err_valid = np.mean(y_hat != y_valid)
+    print(f"Laplace Naive Bayes validation error: {err_valid:.3f}")
+
+    print("beta = 10000")
+    model_laplace_big_beta = NaiveBayesLaplace(num_classes=4, beta=10000)
+    model_laplace_big_beta.fit(X, y)
+
+    y_hat = model_laplace_big_beta.predict(X)
+    err_train = np.mean(y_hat != y)
+    print(f"Laplace Naive Bayes training error: {err_train:.3f}")
+
+    y_hat = model_laplace_big_beta.predict(X_valid)
+    err_valid = np.mean(y_hat != y_valid)
+    print(f"Laplace Naive Bayes validation error: {err_valid:.3f}")
+
+    print(f"Naive p value: {model.p_xy[1][1]}")
+    print(f"Laplace p value: {model_laplace.p_xy[1][1]}")
+    print(f"Big Laplace p value: {model_laplace_big_beta.p_xy[1][1]}")
 
 
 @handle("4")
@@ -249,15 +313,34 @@ def q5_2():
     X = load_dataset("clusterData.pkl")["X"]
 
     fname = Path("..", "figs", "kmeans_5_2_lowest_error.png")
-    k_graph = []
+    k_graph = [
+        999999,
+        999999,
+        999999,
+        999999,
+        999999,
+        999999,
+        999999,
+        999999,
+        999999,
+        999999,
+    ]
     for i in range(50):
         k = random.choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
         model = Kmeans(k)
         model.fit(X)
         y = model.predict(X)
         error = model.error(X, y, model.means)
-        k_graph.append((k, error))
+        # k_graph.append((k, error))
         print(f"[{i}] k={k}: Error {error}")
+        if error < k_graph[k - 1]:
+            k_graph[k - 1] = error
+            print(f"      k={k} Best error so far, saved.")
+
+    plt.plot(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], k_graph, marker="o")
+    plt.xlabel("K-Values")
+    plt.ylabel("Error")
+    plt.savefig(fname)
 
 
 if __name__ == "__main__":
